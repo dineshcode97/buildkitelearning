@@ -1,1 +1,12 @@
-.
+steps:
+  - label: "Build Docker Image"
+    command: "docker build -t myapp:latest ."
+    agents:
+      queue: "docker"
+
+  - label: "Deploy to Production"
+    command: "docker-compose up -d"
+    agents:
+      queue: "deploy"
+    depends_on:
+      - "Build Docker Image"
