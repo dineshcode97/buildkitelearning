@@ -32,4 +32,5 @@ steps:
     depends_on: "appstep"
     command:
     - 'pwd'
-    - "./buildkite/push.sh"
+    - "cd .buildkite"
+    - "/bin/bash push.sh"
