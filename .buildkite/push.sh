@@ -1,3 +1,4 @@
+#!/bin/bash
 if [ $$(buildkite-agent meta-data get approval) == "yes" ]; then
          cat <<- YAML | buildkite-agent pipeline upload
          steps:
