@@ -26,12 +26,10 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-                script {
-                    // Log in to your Docker registry
-                    docker.withRegistry("${DOCKER_REGISTRY}", 'your-docker-credentials-id') {
-                        // Push the Docker image to the registry
-                        dockerImage.push("${DOCKER_IMAGE_TAG}")
-                    }
+                withCredentials([usernamePassword(credentialsId: 'dhubpass', passwordVariable: 'DHPASS', usernameVariable: 'DHUSER')]) {
+                 sh 'sudp docker login -u $DHUSER -p DHPASS'
+                 sh 'sudo docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}'
+}
                 }
             }
         }
