@@ -31,4 +31,4 @@ steps:
   - label: "Docker Push" 
     depends_on: "appstep"
     command:
-    - "push.sh"
+    - "./buildkite/push.sh"
