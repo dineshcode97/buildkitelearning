@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         // Define variables here, such as the Docker registry, image name, and tag
-        DOCKER_REGISTRY = 'your-docker-registry.com' // Replace with your Docker registry URL
+        DOCKER_REGISTRY = 'dineshcode97' // Replace with your Docker registry URL
         DOCKER_IMAGE_NAME = 'my-app' // Replace with your desired image name
         DOCKER_IMAGE_TAG = 'latest' // Replace with your desired image tag
     }
@@ -18,10 +18,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    // Build the Docker image using the Dockerfile in your repository
-                    dockerImage = docker.build("${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}", '.')
-                }
+                    sh 'docker build -t ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} .'
             }
         }
 
