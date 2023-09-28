@@ -29,12 +29,11 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'dhubpass', passwordVariable: 'DHPASS', usernameVariable: 'DHUSER')]) {
                  sh 'sudp docker login -u $DHUSER -p DHPASS'
                  sh 'sudo docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}'
-}
+                }
                 }
             }
-        }
     }
-
+       
     post {
         success {
             // Notify or perform additional actions on successful build and push
