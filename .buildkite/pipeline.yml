@@ -1,2 +1,34 @@
+# .buildkite/pipeline.yml
+
+env:
+  DOCKER_REGISTRY: 'dineshcode97'
+  DOCKER_IMAGE_NAME: 'my-app'
+  DOCKER_IMAGE_TAG: 'latest'
+  PASS: 'dinuDHUB097\$'
+
 steps:
-  - command: "echo hi"
+  - label: ':git: Checkout'
+    command: 'git clone https://github.com/dineshcode97/buildkitelearning.git'
+    artifact_paths: 'buildkitelearning/*'
+    key: 'checkout'
+
+  - label: ':docker: Build Docker Image'
+    command:
+      - 'docker build -t $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG .'
+    key: 'build'
+    depends_on: 'checkout'
+  - input: "Request Release"
+    label: "approval-step"
+    key: "appstep"
+    fields:
+      - select: "Stream"
+        key: "approval"
+        options:
+          - label: "Yes"
+            value: "yes"
+          - label: "No"
+            value: "no"
+  - label: "Docker Push" 
+    depends_on: "appstep"
+    command:
+    - "push.sh"
