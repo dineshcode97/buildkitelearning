@@ -13,8 +13,8 @@ steps:
 
   - label: 'Fetch Secret'
     command: 
-    - 'DPASS=$(vault kv get -format=json secret/myapp | jq -r '.data.password')'
-    - 'DUSER=$(vault kv get -format=json secret/myapp | jq -r '.data.username')'
+    - "DPASS=$(vault kv get -format=json secret/myapp | jq -r '.data.password')"
+    - "DUSER=$(vault kv get -format=json secret/myapp | jq -r '.data.username')"
     key: 'vault'
     depends_on: 'checkout'
 
