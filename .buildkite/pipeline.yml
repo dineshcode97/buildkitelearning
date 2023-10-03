@@ -12,14 +12,17 @@ steps:
     key: 'checkout'
 
   - label: 'Fetch Secret'
-    command: 'DUSER=$(vault kv get -format=json secret/myapp | jq -r '.data.username') && DPASS=$(vault kv get -format=json secret/myapp | jq -r '.data.password')'
+    command: 
+      - 'DPASS=$(vault kv get -format=json secret/myapp | jq -r '.data.password')'
+      - 'DUSER=$(vault kv get -format=json secret/myapp | jq -r '.data.username')'
     key: 'vault'
+    depends_on: 'checkout'
 
   - label: ':docker: Build Docker Image'
     command:
       - 'docker build -t $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG .'
     key: 'build'
-    depends_on: 'checkout'
+    depends_on: 'vault'
   - input: "Request Release"
     label: "approval-step"
     key: "appstep"
