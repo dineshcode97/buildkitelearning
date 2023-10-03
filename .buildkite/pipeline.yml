@@ -1,16 +1,19 @@
 # .buildkite/pipeline.yml
 
 env:
-  DOCKER_REGISTRY: 'dineshcode97'
   DOCKER_IMAGE_NAME: 'my-app'
   DOCKER_IMAGE_TAG: 'latest'
-  PASS: 'dinuDHUB097\$'
+  DOCKER_REGISTRY: 'dineshcode97'
 
 steps:
   - label: ':git: Checkout'
     command: 'git clone https://github.com/dineshcode97/buildkitelearning.git'
     artifact_paths: 'buildkitelearning/*'
     key: 'checkout'
+
+  - label: 'Fetch Secret'
+    command: 'DUSER=$(vault kv get -format=json secret/myapp | jq -r '.data.username') && DPASS=$(vault kv get -format=json secret/myapp | jq -r '.data.password')'
+    key: 'vault'
 
   - label: ':docker: Build Docker Image'
     command:
