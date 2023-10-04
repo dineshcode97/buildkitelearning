@@ -26,7 +26,7 @@ pipeline {
 
         stage('Approval') {
             steps {
-                input(message: 'Do you want to proceed with pushing the Docker image?', ok: 'Yes', submitter: 'user')
+                input(message: 'Do you want to proceed with pushing the Docker image?', ok: 'Yes', submitter: 'admin')
             }
         }
 
