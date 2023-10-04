@@ -18,22 +18,36 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                    sh 'ls -la'
+                sh 'ls -la'
                 sh 'pwd'
-                    sh 'sudo docker build -t ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} .'
+                sh 'sudo docker build -t ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} .'
+            }
+        }
+
+        stage('Approval') {
+            steps {
+                input(message: 'Do you want to proceed with pushing the Docker image?', ok: 'Yes', submitter: 'user')
             }
         }
 
         stage('Push Docker Image') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'dhubpass', passwordVariable: 'DHPASS', usernameVariable: 'DHUSER')]) {
-                 sh 'sudo docker login -u $DHUSER -p $DHPASS'
-                 sh 'sudo docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}'
-                }
+            when {
+                expression {
+                    // Only run this stage if the approval is granted (input "Yes" is selected)
+                    currentBuild.rawBuild.causes.any { cause ->
+                        cause.isInstanceOf(hudson.model.Cause$UserIdCause.class) && cause.getUserId() == 'user' && cause.getShortDescription() == 'Approved by user'
+                    }
                 }
             }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dhubpass', passwordVariable: 'DHPASS', usernameVariable: 'DHUSER')]) {
+                    sh 'sudo docker login -u $DHUSER -p $DHPASS'
+                    sh 'sudo docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}'
+                }
+            }
+        }
     }
-       
+
     post {
         success {
             // Notify or perform additional actions on successful build and push
