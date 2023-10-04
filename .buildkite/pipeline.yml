@@ -14,6 +14,7 @@ steps:
   - label: 'Fetch Secret'
     command: 
     - "export VAULT_ADDR='http://13.232.106.130:8200'"
+    - "export VAULT_TOKEN='hvs.vDgkUexfweoIT5w1kQOcXMN9"
     - "DPASS=$(vault kv get -format=json myapp/credentials | jq -r '.data.password')"
     - "DUSER=$(vault kv get -format=json myapp/credentials | jq -r '.data.username')"
     key: 'vault'
