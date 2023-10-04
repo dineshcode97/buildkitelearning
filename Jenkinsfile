@@ -24,26 +24,16 @@ pipeline {
             }
         }
 
-        stage('Approval') {
-            steps {
-                input(message: 'Do you want to proceed with pushing the Docker image?', ok: 'Yes', submitter: 'admin')
-            }
-        }
+       
 
         stage('Push Docker Image') {
             steps {
-                script {
-                    def approvalInput = input(id: 'approval', message: 'Do you want to proceed with pushing the Docker image?', parameters: [booleanParam(defaultValue: true, description: 'Approve?')])
-                    if (approvalInput) {
+                
                         withCredentials([usernamePassword(credentialsId: 'dhubpass', passwordVariable: 'DHPASS', usernameVariable: 'DHUSER')]) {
                             sh 'sudo docker login -u $DHUSER -p $DHPASS'
                             sh 'sudo docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}'
                         }
-                    } else {
-                        error 'Approval not granted. Stopping the pipeline.'
-                    }
-                }
-            }
+            } 
         }
     }
 
