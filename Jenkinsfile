@@ -35,7 +35,7 @@ pipeline {
                 expression {
                     // Only run this stage if the approval is granted (input "Yes" is selected)
                     currentBuild.rawBuild.causes.any { cause ->
-                        cause.isInstanceOf(hudson.model.Cause$UserIdCause.class) && cause.getUserId() == 'user' && cause.getShortDescription() == 'Approved by user'
+                        cause.isInstanceOf(hudson.model.Cause$UserIdCause.class) && cause.getUserId() == 'admin' && cause.getShortDescription() == 'Approved by user'
                     }
                 }
             }
