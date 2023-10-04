@@ -31,18 +31,17 @@ pipeline {
         }
 
         stage('Push Docker Image') {
-            when {
-                expression {
-                    // Only run this stage if the approval is granted (input "Yes" is selected)
-                    currentBuild.rawBuild.causes.any { cause ->
-                        cause.isInstanceOf(hudson.model.Cause$UserIdCause.class) && cause.getUserId() == 'admin' && cause.getShortDescription() == 'Approved by user'
-                    }
-                }
-            }
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dhubpass', passwordVariable: 'DHPASS', usernameVariable: 'DHUSER')]) {
-                    sh 'sudo docker login -u $DHUSER -p $DHPASS'
-                    sh 'sudo docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}'
+                script {
+                    def approvalInput = input(id: 'approval', message: 'Do you want to proceed with pushing the Docker image?', parameters: [booleanParam(defaultValue: true, description: 'Approve?')])
+                    if (approvalInput) {
+                        withCredentials([usernamePassword(credentialsId: 'dhubpass', passwordVariable: 'DHPASS', usernameVariable: 'DHUSER')]) {
+                            sh 'sudo docker login -u $DHUSER -p $DHPASS'
+                            sh 'sudo docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}'
+                        }
+                    } else {
+                        error 'Approval not granted. Stopping the pipeline.'
+                    }
                 }
             }
         }
